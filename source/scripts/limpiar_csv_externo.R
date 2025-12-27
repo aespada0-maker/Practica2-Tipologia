@@ -1,4 +1,4 @@
-install.packages("tidyverse")  # solo la primera vez
+#install.packages("tidyverse")  # solo la primera vez
 library(tidyverse)
 # cargar csv
 df_raw <- read.csv(
@@ -56,6 +56,12 @@ for(col in price_cols) {
 print("NAs:")
 print(colSums(is.na(df_raw)))
 
-print(df_raw)
+# Crear carpeta si no existe
+if(!dir.exists("source/dataset_final/productos_externos")){
+  dir.create("source/dataset_final/productos_externos")
+}
+
+# Guardar CSV
+write.csv(df_raw, "source/dataset_final/productos_externos/productos_externos.csv", row.names = FALSE)
 
 
