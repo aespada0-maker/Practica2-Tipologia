@@ -1,5 +1,3 @@
-library(tidyverse)
-
 # cargar csv
 df_raw <- read.table(
   "source/dataset/practica1/productos.csv",
