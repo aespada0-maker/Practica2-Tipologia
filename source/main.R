@@ -14,3 +14,15 @@ source("source/scripts/limpiar_csv_productos2.R")
 
 # 4. Ejecutar limpieza del script externo
 source("source/scripts/limpiar_csv_externo.R")
+
+lapply(
+  list(
+    df_kaggle,
+    df_oppendatabay,
+    df_pract1,
+    df_raw
+  ),
+  names
+)
+
+source("source/scripts/crear_csv_final.R")

@@ -1,6 +1,6 @@
-df_oppendatabay <- read.table(
+df_oppendatabay <- read.csv(
   "source/dataset/productos2/productos2.csv",
-  sep = ",")
+  stringsAsFactors = FALSE)
 
 write.csv(
   df_oppendatabay,
