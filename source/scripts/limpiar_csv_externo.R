@@ -1,5 +1,3 @@
-#install.packages("tidyverse")  # solo la primera vez
-library(tidyverse)
 # cargar csv
 df_raw <- read.csv(
   "source/dataset/otros/Mobiles Dataset (2025).csv",
