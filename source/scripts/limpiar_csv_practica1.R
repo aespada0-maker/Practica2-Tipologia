@@ -1,5 +1,5 @@
 # cargar csv
-df_raw <- read.table(
+df_raw_ext <- read.table(
   "source/dataset/practica1/productos.csv",
   sep = ";",
   header = FALSE,
@@ -9,10 +9,10 @@ df_raw <- read.table(
 )
 
 # quitar primera fila, la que tiene la cabecera
-df_raw <- df_raw[-1, ]
+df_raw_ext <- df_raw_ext[-1, ]
 
 # nombres de columna (en el csv tiene tilde y estan mal)
-colnames(df_raw) <- c(
+colnames(df_raw_ext) <- c(
   "marca",
   "modelo",
   "precio",
@@ -26,7 +26,7 @@ colnames(df_raw) <- c(
 )
 
 # limpiar precio
-df_raw <- df_raw %>%
+df_raw_ext <- df_raw_ext %>%
   mutate(
     precio = str_replace_all(precio, ",", "."),
     precio = str_replace_all(precio, "[^0-9\\.]", ""),
@@ -34,14 +34,14 @@ df_raw <- df_raw %>%
   )
 
 # limpiar valoracion media
-df_raw <- df_raw %>%
+df_raw_ext <- df_raw_ext %>%
   mutate(
     valoracion_media = str_extract(valoracion_media, "[0-9\\.]+"),
     valoracion_media = as.numeric(valoracion_media)
   )
 
 # mutar a numericos
-df_raw <- df_raw %>%
+df_raw_ext <- df_raw_ext %>%
   mutate(
     val_5 = as.numeric(val_5),
     val_4 = as.numeric(val_4),
@@ -50,16 +50,16 @@ df_raw <- df_raw %>%
     val_1 = as.numeric(val_1)
   )
 
-str(df_raw$precio)
+str(df_raw_ext$precio)
 
 # mirar si hay NAs
 print("NAs:")
-print(colSums(is.na(df_raw)))
+print(colSums(is.na(df_raw_ext)))
 # no tenemos NAs
 
 # guardamos csv
 write.csv(
-  df_raw,
+  df_raw_ext,
   "source/dataset_final/practica1/productos.csv",
   row.names = FALSE
 )

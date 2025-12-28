@@ -63,3 +63,5 @@ if(!dir.exists("source/dataset_final/productos_externos")){
 write.csv(df_raw, "source/dataset_final/productos_externos/productos_externos.csv", row.names = FALSE)
 
 
+rm(col)
+rm(price_cols)

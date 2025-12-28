@@ -34,3 +34,6 @@ write.csv(
   "source/dataset_final/productos1/productos1.csv",
   row.names = FALSE
 )
+
+rm(df_kaggle_train)
+rm(df_kaggle_test)
