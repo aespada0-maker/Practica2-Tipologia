@@ -83,3 +83,5 @@ dataset_final_raw <- rbind(
   oppendatabay_h,
   raw_h
 )
+
+write.csv(dataset_final_raw, "source/dataset_final/dataset_completo.csv", row.names = FALSE)
