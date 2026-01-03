@@ -3,7 +3,7 @@ library(dplyr)
 library(caret)
 library(ggplot2)
 library(scales)
-
+library(cluster)
 # 1. Ejercutar limpieza del script original 
 source("source/scripts/limpiar_csv_practica1.R")
 
@@ -27,3 +27,6 @@ source("source/scripts/crear_csv_final.R")
 
 # 4. modelo supervisado
 source("source/scripts/modelo_supervisado.R")
+
+# 5. modelo no supervisado
+source("source/scripts/modelo_no_supervisado.R")
