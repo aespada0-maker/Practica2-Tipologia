@@ -128,3 +128,9 @@ ggsave("source/graficos/supervisado/4-rel_precio_real_predicho.png", g, width = 
 
 rm(df_pred)
 rm(g)
+rm(ds_m_supervisado)
+rm(m_supervisado_test)
+rm(m_supervisado_train)
+rm(m_supervisado_idx)
+rm(m_supervisado_lm)
+rm(m_supervisado_pred)
