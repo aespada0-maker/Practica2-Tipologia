@@ -73,3 +73,58 @@ g <- ggplot(ds_m_supervisado, aes(x = precio)) +
   )
 
 ggsave("source/graficos/supervisado/1-dist_precio.png", g, width = 7, height = 5)
+
+# precio por OS
+g <- ggplot(ds_m_supervisado, aes(x = os, y = precio)) +
+  geom_boxplot(fill = "blue", outlier.color = "red", alpha = 0.7) +
+  labs(
+    title = "Precio por sistema operativo",
+    x = "Sistema operativo",
+    y = "Precio (€)"
+  ) +
+  scale_y_continuous(
+    labels = scales::label_number(big.mark = ".", decimal.mark = ",")
+  )
+
+ggsave("source/graficos/supervisado/2-precio_por_os.png", g, width = 7, height = 5)
+
+# relacion entre precio y ram
+g <- ggplot(ds_m_supervisado, aes(x = ram_gb, y = precio)) +
+  geom_point(alpha = 0.4, color = "blue") +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(
+    title = "Relación entre RAM y precio",
+    x = "Memoria RAM (GB)",
+    y = "Precio (€)"
+  ) +
+  scale_y_continuous(
+    labels = scales::label_number(big.mark = ".", decimal.mark = ",")
+  )
+
+ggsave("source/graficos/supervisado/3-rel_precio_Ram.png", g, width = 7, height = 5)
+
+# relacion entre precio real y predicho
+df_pred <- data.frame(
+  precio_real = m_supervisado_test$precio,
+  precio_predicho = m_supervisado_pred
+)
+
+g <- ggplot(df_pred, aes(x = precio_real, y = precio_predicho)) +
+  geom_point(alpha = 0.5, color = "blue") +
+  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
+  labs(
+    title = "Precio real vs precio predicho",
+    x = "Precio real (€)",
+    y = "Precio predicho (€)"
+  ) +
+  scale_x_continuous(
+    labels = scales::label_number(big.mark = ".", decimal.mark = ",")
+  ) +
+  scale_y_continuous(
+    labels = scales::label_number(big.mark = ".", decimal.mark = ",")
+  ) 
+
+ggsave("source/graficos/supervisado/4-rel_precio_real_predicho.png", g, width = 7, height = 5)
+
+rm(df_pred)
+rm(g)
