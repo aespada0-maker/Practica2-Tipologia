@@ -51,8 +51,8 @@ for(col in price_cols) {
   )
 }
 
-# añadimos en euro el precio. 1 USD = 0.92 EUR
-df_raw$Launched.Price..EURO. <- round(df_raw$Launched.Price..USA. * 0.92, 2)
+# añadimos en euro el precio. 1 USD = 0,85 EUR
+df_raw$Launched.Price..EURO. <- round(df_raw$Launched.Price..USA. * 0.85, 2)
   
 # mirar si hay NAs
 print("NAs:")
