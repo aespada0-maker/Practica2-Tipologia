@@ -84,4 +84,35 @@ dataset_final_raw <- rbind(
   raw_h
 )
 
+# limpiar dataset final
+# demasiados valores vacios en val_1-val_5 -> el 96% los borramos, mantenemos solo la valoración media
+dataset_final_raw <- dataset_final_raw %>%
+  dplyr::select(-val_1, -val_2, -val_3, -val_4, -val_5)
+
+# variables técnicas. No eliminamos filas, hacemos una imputación simple con la mediana por ser variables numéricas con posibles asimetrias
+dataset_final_raw$ram_gb[is.na(dataset_final_raw$ram_gb)] <- median(dataset_final_raw$ram_gb, na.rm = TRUE)
+dataset_final_raw$battery_mah[is.na(dataset_final_raw$battery_mah)] <- median(dataset_final_raw$battery_mah, na.rm = TRUE)
+dataset_final_raw$screen_size[is.na(dataset_final_raw$screen_size)] <- median(dataset_final_raw$screen_size, na.rm = TRUE)
+dataset_final_raw$num_cores[is.na(dataset_final_raw$num_cores)] <- median(dataset_final_raw$num_cores, na.rm = TRUE)
+dataset_final_raw$year[is.na(dataset_final_raw$year)] <- median(dataset_final_raw$year, na.rm = TRUE)
+
+# variables categoricas, podemos normalizar el texto
+# ya está en minúscula, pero algunos los tenémos entre ""
+dataset_final_raw$modelo <- gsub('^"|"$', '', dataset_final_raw$modelo)
+dataset_final_raw$marca <- as.factor(dataset_final_raw$marca)
+dataset_final_raw$os <- as.factor(dataset_final_raw$os)
+
+# escribimos el CSV
 write.csv(dataset_final_raw, "source/dataset_final/dataset_completo.csv", row.names = FALSE)
+
+# eliminamos variables de memoria
+rm(columnas_finales)
+rm(mapeo_pract1)
+rm(mapeo_oppendatabay)
+rm(mapeo_raw)
+rm(df_oppendatabay)
+rm(df_pract1)
+rm(df_raw)
+rm(oppendatabay_h)
+rm(prac1_h)
+rm(raw_h)
