@@ -57,7 +57,7 @@ mapeo_raw <- c(
   "Battery.Capacity" = "battery_mah",
   "Screen.Size" = "screen_size",
   "Launched.Year" = "year",
-  "Launched.Price..USA." = "precio"
+  "Launched.Price..EURO." = "precio"
 )
 
 normalizar_texto <- function(x){
@@ -90,6 +90,7 @@ dataset_final_raw <- dataset_final_raw %>%
   dplyr::select(-val_1, -val_2, -val_3, -val_4, -val_5)
 
 # variables técnicas. No eliminamos filas, hacemos una imputación simple con la mediana por ser variables numéricas con posibles asimetrias
+# xiaomi != apple, tendría sentido una imputación por marca, pero sin datos suficientes podríamos crear una dependencia de las variables. HAcemos una global.
 dataset_final_raw$ram_gb[is.na(dataset_final_raw$ram_gb)] <- median(dataset_final_raw$ram_gb, na.rm = TRUE)
 dataset_final_raw$battery_mah[is.na(dataset_final_raw$battery_mah)] <- median(dataset_final_raw$battery_mah, na.rm = TRUE)
 dataset_final_raw$screen_size[is.na(dataset_final_raw$screen_size)] <- median(dataset_final_raw$screen_size, na.rm = TRUE)
