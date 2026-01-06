@@ -1,0 +1,12 @@
+
+	Welch Two Sample t-test
+
+data:  precio by os
+t = -14.356, df = 405.46, p-value < 2.2e-16
+alternative hypothesis: true difference in means between group android and group ios is not equal to 0
+95 percent confidence interval:
+ -623.1108 -473.0118
+sample estimates:
+mean in group android     mean in group ios 
+             387.4919              935.5532 
+

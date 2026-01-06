@@ -1,4 +1,4 @@
-# variable objetivo -> precio
+# 1 prediccion: variable objetivo -> precio
 
 # tenemos muchos os vacios y es una variable categorica
 ds_m_supervisado <- dataset_final_raw[dataset_final_raw$os != "" & !is.na(dataset_final_raw$os), ]
@@ -63,6 +63,7 @@ m_supervisado_mae <- MAE(m_supervisado_pred, m_supervisado_test$precio)
 
 cat("RMSE:", m_supervisado_rmse, "\nMAE:", m_supervisado_mae, "\n")
 
+# 2. graficos
 # sacamos la distribución del precio
 g <- ggplot(ds_m_supervisado, aes(x = precio)) +
   geom_histogram(bins = 30, fill="blue", color="white") +
@@ -130,6 +131,14 @@ g <- ggplot(df_pred, aes(x = precio_real, y = precio_predicho)) +
 
 ggsave("source/graficos/supervisado/4-rel_precio_real_predicho.png", g, width = 7, height = 5)
 
+# 3. hipótesis
+# quitamos los SO que no sean android o ios
+
+# t-test para comparar los precios de ios y android
+m_supervisado_train_h <- m_supervisado_train[m_supervisado_train$os == "android" | m_supervisado_train$os == "ios", ]
+m_supervisado_ttest <- t.test(precio ~ os, data = m_supervisado_train_h)
+capture.output(m_supervisado_ttest, file = "source/graficos/supervisado/t_test_result.txt")
+
 rm(df_pred)
 rm(g)
 rm(ds_m_supervisado)
@@ -140,3 +149,4 @@ rm(m_supervisado_lm)
 rm(m_supervisado_pred)
 rm(m_supervisado_rmse)
 rm(m_supervisado_mae)
+rm(m_supervisado_ttest)
