@@ -3,9 +3,24 @@
 # tenemos muchos os vacios y es una variable categorica
 ds_m_supervisado <- dataset_final_raw[dataset_final_raw$os != "" & !is.na(dataset_final_raw$os), ]
 
-# hemos quitado "" y vacía, quitamos los niveles del factor, no son corectos
+# Eliminamos marcas poco frecuentes (sino da error si no esta en ambos grupos)
+ds_m_supervisado <- ds_m_supervisado %>%
+  filter(marca %in% (ds_m_supervisado %>%
+                       count(marca) %>%
+                       filter(n >= 5) %>%
+                       pull(marca)))
+
+# revisamos datos y no usamos si hay muchos NAs
+colSums(is.na(ds_m_supervisado))
+# valoración media tiene muchos NAs, no lo usaremos en el modelo
+
+# quitamos factores eliminados
 ds_m_supervisado$os <- droplevels(ds_m_supervisado$os)
 ds_m_supervisado$marca <- droplevels(ds_m_supervisado$marca)
+
+# volvemos a dar factor
+factor(ds_m_supervisado$os)
+factor(ds_m_supervisado$marca)
 
 # añadimos seed
 set.seed(42)
@@ -15,41 +30,16 @@ m_supervisado_idx <- createDataPartition(ds_m_supervisado$precio, p = 0.8, list 
 m_supervisado_train <- ds_m_supervisado[m_supervisado_idx, ]
 m_supervisado_test  <- ds_m_supervisado[-m_supervisado_idx, ]
 
-# Eliminamos marcas poco frecuentes (sino da error si no esta en ambos grupos)
-marcas_conservar <- m_supervisado_train %>%
-  count(marca) %>%
-  filter(n >= 5) %>%
-  pull(marca)
-
-m_supervisado_train <- m_supervisado_train %>%
-  filter(marca %in% marcas_conservar)
-
-m_supervisado_test <- m_supervisado_test %>%
-  filter(marca %in% marcas_conservar)
-
-rm(marcas_conservar)
-
-# Eliminamos niveles sobrantes
-m_supervisado_train$marca <- droplevels(m_supervisado_train$marca)
-m_supervisado_test$marca  <- droplevels(m_supervisado_test$marca)
-
-# alineamos niveles de los factor categoricos
-m_supervisado_test$os <- factor(
-  m_supervisado_test$os,
-  levels = levels(m_supervisado_train$os)
-)
-m_supervisado_test$marca <- factor(
-  m_supervisado_test$marca,
-  levels = levels(m_supervisado_train$marca)
-)
-
-# revisamos datos
-colSums(is.na(dataset_final_raw))
-# no usamos valoracion_media, muchos NAsW
+# revisamos datos y no usamos si hay demasiada correlación entre variables
+m_supervisado_cor <- cor(ds_m_supervisado[, c("ram_gb", "battery_mah", "screen_size", "num_cores", "year")])
+png("source/graficos/supervisado/0-correlation_matrix.png", width = 800, height = 600)
+corrplot(m_supervisado_cor, method = "circle")
+dev.off()
+# en este caso hay bastante correlacion entre bateria y pantalla
 
 # modelo supervisado - regresión lineal
 m_supervisado_lm <- lm(
-  precio ~ ram_gb + battery_mah + screen_size + num_cores + marca + os + year,
+  precio ~ marca + ram_gb + battery_mah + screen_size + num_cores + year,
   data = m_supervisado_train
 )
 
@@ -67,7 +57,6 @@ cat("RMSE:", m_supervisado_rmse, "\nMAE:", m_supervisado_mae, "\n")
 # sacamos la distribución del precio
 g <- ggplot(ds_m_supervisado, aes(x = precio)) +
   geom_histogram(bins = 30, fill="blue", color="white") +
-  scale_x_log10() +
   labs(
     title = "Distribución por precio",
     x = "Precio (€)",
@@ -137,7 +126,17 @@ ggsave("source/graficos/supervisado/4-rel_precio_real_predicho.png", g, width = 
 # t-test para comparar los precios de ios y android
 m_supervisado_train_h <- m_supervisado_train[m_supervisado_train$os == "android" | m_supervisado_train$os == "ios", ]
 m_supervisado_ttest <- t.test(precio ~ os, data = m_supervisado_train_h)
-capture.output(m_supervisado_ttest, file = "source/graficos/supervisado/t_test_result.txt")
+capture.output(m_supervisado_ttest, file = "source/graficos/supervisado/5-hipotesis-ttest.txt")
+
+g <- ggplot(m_supervisado_train_h, aes(x = os, y = precio, fill = os)) +
+  geom_boxplot() +
+  labs(title = "Comparación de Precios por Sistema Operativo",
+       x = "Sistema Operativo",
+       y = "Precio") +
+  scale_y_log10()
+
+ggsave("source/graficos/supervisado/5-hipotesis.png", g, width = 7, height = 5)
+
 
 rm(df_pred)
 rm(g)
@@ -150,3 +149,4 @@ rm(m_supervisado_pred)
 rm(m_supervisado_rmse)
 rm(m_supervisado_mae)
 rm(m_supervisado_ttest)
+rm(m_supervisado_cor)
