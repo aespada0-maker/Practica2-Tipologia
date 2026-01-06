@@ -21,6 +21,14 @@ g <- ggplot(dataset_final_raw, aes(y = precio, x = "")) +
   labs(title = "Boxplot de precios")
 ggsave("source/graficos/EDA/3-precio-outliers.png", g, width = 7, height = 5)
 
+# boxplot de precios (para detectar outliers)
+g <- ggplot(dataset_final_raw, aes(y = precio, x = "")) +
+  geom_boxplot(fill = "red") +
+  scale_y_continuous(labels = dollar_format(prefix = "€")) +
+  labs(title = "Boxplot de precios (log10)") +
+  scale_y_log10()
+ggsave("source/graficos/EDA/3-precio-outliers-log10.png", g, width = 7, height = 5)
+
 
 # otras variables numéricas
 sink("source/graficos/EDA/summary_numericas.txt")
