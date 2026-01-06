@@ -4,6 +4,9 @@ library(caret)
 library(ggplot2)
 library(scales)
 library(cluster)
+library(DataExplorer)
+library(stringr)
+
 # 1. Ejercutar limpieza del script original 
 source("source/scripts/limpiar_csv_practica1.R")
 
@@ -24,6 +27,8 @@ lapply(
 )
 
 source("source/scripts/crear_csv_final.R")
+
+source("source/scripts/EDA.R")
 
 # 4. modelo supervisado
 source("source/scripts/modelo_supervisado.R")

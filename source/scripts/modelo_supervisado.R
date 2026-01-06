@@ -43,9 +43,13 @@ m_supervisado_test$marca <- factor(
   levels = levels(m_supervisado_train$marca)
 )
 
+# revisamos datos
+colSums(is.na(dataset_final_raw))
+# no usamos valoracion_media, muchos NAsW
+
 # modelo supervisado - regresión lineal
 m_supervisado_lm <- lm(
-  precio ~ ram_gb + battery_mah + screen_size + num_cores + valoracion_media + marca + os + year,
+  precio ~ ram_gb + battery_mah + screen_size + num_cores + marca + os + year,
   data = m_supervisado_train
 )
 
@@ -54,10 +58,10 @@ summary(m_supervisado_lm)
 
 # empezamos con la prediccion
 m_supervisado_pred <- predict(m_supervisado_lm, newdata = m_supervisado_test)
-RMSE(m_supervisado_pred, m_supervisado_test$precio)
-MAE(m_supervisado_pred, m_supervisado_test$precio)
+m_supervisado_rmse <- RMSE(m_supervisado_pred, m_supervisado_test$precio)
+m_supervisado_mae <- MAE(m_supervisado_pred, m_supervisado_test$precio)
 
-
+cat("RMSE:", m_supervisado_rmse, "\nMAE:", m_supervisado_mae, "\n")
 
 # sacamos la distribución del precio
 g <- ggplot(ds_m_supervisado, aes(x = precio)) +
@@ -134,3 +138,5 @@ rm(m_supervisado_train)
 rm(m_supervisado_idx)
 rm(m_supervisado_lm)
 rm(m_supervisado_pred)
+rm(m_supervisado_rmse)
+rm(m_supervisado_mae)

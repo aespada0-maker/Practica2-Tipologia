@@ -97,6 +97,24 @@ dataset_final_raw$screen_size[is.na(dataset_final_raw$screen_size)] <- median(da
 dataset_final_raw$num_cores[is.na(dataset_final_raw$num_cores)] <- median(dataset_final_raw$num_cores, na.rm = TRUE)
 dataset_final_raw$year[is.na(dataset_final_raw$year)] <- median(dataset_final_raw$year, na.rm = TRUE)
 
+# hacemos una imputación de el OS por marca
+dataset_final_raw <- dataset_final_raw %>%
+  mutate(os = ifelse(os == "" | is.na(os), NA, os))
+# calculamos el OS más frecuente por marca
+os_por_marca <- dataset_final_raw %>%
+  filter(!is.na(os)) %>%
+  count(marca, os) %>%
+  group_by(marca) %>%
+  slice_max(n, n = 1, with_ties = FALSE) %>%
+  ungroup() %>%
+  select(marca, os_moda = os)
+# hacemos la imputación
+dataset_final_raw <- dataset_final_raw %>%
+  left_join(os_por_marca, by = "marca") %>%
+  mutate(os = ifelse(is.na(os), os_moda, os)) %>%
+  mutate(os = ifelse(is.na(os), "other", os)) %>%
+  select(-os_moda)
+
 # variables categoricas, podemos normalizar el texto
 # ya está en minúscula, pero algunos los tenémos entre ""
 dataset_final_raw$modelo <- gsub('^"|"$', '', dataset_final_raw$modelo)
@@ -107,6 +125,7 @@ dataset_final_raw$os <- as.factor(dataset_final_raw$os)
 write.csv(dataset_final_raw, "source/dataset_final/dataset_completo.csv", row.names = FALSE)
 
 # eliminamos variables de memoria
+rm(os_por_marca)
 rm(columnas_finales)
 rm(mapeo_pract1)
 rm(mapeo_oppendatabay)
